@@ -1,20 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Drum Kit</title>
 
-  {% include head.html %}
+    <style>
+        .key {
+  border: 2px solid black;
+  width: 100px;
+  height: 100px;
+  
+  text-align: center;
+  line-height: 100px;
+}
+    </style>
 
-  <body>
+    <script>
+        function playSound(e) {
+ const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+ const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
+ 
+  if (!audio) 
+  return; // stop the function
+  
+  console.log(key);
+  
+ audio.currentTime = 0; // rewind to the start 
+ audio.play();
+ key.classList.add('playing');
+}
+function removeTransition(e) {
+ if (e.propertyName !== 'transform') 
+  return; // skip it if it's not a transform
+ this.classList.remove('playing');
+}
+  const keys = document.querySelectorAll('.key');
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+  window.addEventListener('keydown', playSound);
+    
+    </script>
 
-    {% include header.html %}
+</head>
+<body>
 
-    <div class="page-content">
-      <div class="wrapper">
-        {{ content }}
+<!-- Keys -->
+{% for post in site.posts %}
+  <div class="keys">
+      <div data-key="{{ post.keycode }}" class="key">
+        <span class="sound"> {{ post.title }} </span>
       </div>
-    </div>
+  </div>
+  <!-- Sounds -->
+  <audio data-key="{{ post.keycode }}" src="{{ post.file }}"></audio>
+  
+    
+{% endfor %}
+    
 
-    {% include footer.html %}
-
-  </body>
-
+    
+</body>
 </html>
